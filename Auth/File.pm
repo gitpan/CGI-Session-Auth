@@ -1,10 +1,9 @@
 ###########################################################
 # CGI::Session::Auth::File
 # Authenticated sessions for CGI scripts
-# Copyright (c) 2003 Jochen Lillich <jl@teamlinux.de>
 ###########################################################
 #
-# $Id: File.pm 14 2004-09-27 17:43:37Z jlillich $
+# $Id: File.pm 17 2004-11-12 15:16:07Z jlillich $
 #
 
 package CGI::Session::Auth::File;
@@ -170,6 +169,7 @@ sub _readUserFile {
 
 	# get field names from first line
 	my $fieldlist = <$fd>;
+	chomp $fieldlist;
 	my @fieldnames = split(':', lc $fieldlist);
 	# check for required fieldnames
 	croak "UserFile does not have a 'username' field" if (not grep { 'username' } @fieldnames);

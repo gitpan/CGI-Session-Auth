@@ -1,10 +1,9 @@
 ###########################################################
 # CGI::Session::Auth::DBI
 # Authenticated sessions for CGI scripts
-# Copyright (c) 2003 Jochen Lillich <jl@teamlinux.de>
 ###########################################################
 #
-# $Id: DBI.pm 14 2004-09-27 17:43:37Z jlillich $
+# $Id: DBI.pm 17 2004-11-12 15:16:07Z jlillich $
 #
 
 package CGI::Session::Auth::DBI;
@@ -440,11 +439,11 @@ L<CGI::Session::Auth>
 
 =head1 AUTHOR
 
-Jochen Lillich, E<lt>jl@teamlinux.deE<gt>
+Jochen Lillich, E<lt>jochen@lillich.infoE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2003 by Jochen Lillich
+Copyright 2003-2004 by Jochen Lillich
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.

@@ -1,5 +1,5 @@
-CGI/Session/Auth version 0.01
-=============================
+CGI::Session::Auth
+==================
 $Id: $
 
 CGI::Session::Auth is a Perl class that provides the necessary
@@ -25,14 +25,8 @@ containing his user name, his password and his user id. The user id is
 a 32-character string unique for every user. A user profile can contain 
 additional fields for arbitrary data.
 
-WARNING
-
-This software is still in alpha status. It's meant only to show its basic functionality.
-Features and interface are subject to change. If you want to use CGI::Session::Auth
-in a production environment, please wait for version 1.0.
-
-Assistance in the development of this modules is encouraged and greatly appreciated! 
-Please contact me at mailto:jochen@lillich.info!
+Assistance in the development of this modules is encouraged and
+greatly appreciated!  Please contact me: jochen@lillich.info.
 
 INSTALLATION
 
@@ -61,7 +55,7 @@ http://geewiz.teamlinux.de/projects/perl/cgi-session-auth
 
 COPYRIGHT AND LICENCE
 
-Copyright (c) 2003 Jochen Lillich <jl@teamlinux.de>
+Copyright (c) 2003-2004 Jochen Lillich <jochen@lillich.info>
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself. 

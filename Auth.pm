@@ -1,10 +1,9 @@
 ###########################################################
 # CGI::Session::Auth
 # Authenticated sessions for CGI scripts
-# Copyright (c) 2003 Jochen Lillich <jl@teamlinux.de>
 ###########################################################
 #
-# $Id: Auth.pm 14 2004-09-27 17:43:37Z jlillich $
+# $Id: Auth.pm 17 2004-11-12 15:16:07Z jlillich $
 #
 
 package CGI::Session::Auth;
@@ -378,7 +377,6 @@ sub uniqueUserID {
     ## generate a unique 32-character user ID
     ##
     
-    my $self = shift;
     my ($username) = @_;
     
     return md5_hex(localtime, $username);
@@ -574,12 +572,10 @@ it will be stored in the respective profile field first.
 
 =head1 BUGS
 
-This software is still in alpha status. It's meant only to show its basic functionality.
-Features and interface are subject to change. If you want to use CGI::Session::Auth
-in a production environment, please wait for version 1.0.
+There's always one to be squished.
 
-Assistance in the development of this modules is encouraged and greatly appreciated! 
-Please contact me at L<jl@teamlinux.de>!
+Assistance in the development of this modules is encouraged and
+greatly appreciated! Please contact me at L<jochen@lillich.info>.
 
 
 
@@ -593,12 +589,9 @@ Don't get me started...
 
 L<CGI::Session>
 
-For further information (mailing lists, FAQ, etc.), see the module web site:
-L<http://geewiz.teamlinux.de/projects/perl/cgi-session-auth>
-
 =head1 AUTHOR
 
-Jochen Lillich, E<lt>jl@teamlinux.deE<gt>
+Jochen Lillich, E<lt>jochen@lillich.infoE<gt>
 
 
 =head1 THANKS
@@ -607,14 +600,16 @@ These people have helped in the development of this module:
 
 =over
 
-=item Cees Hek <cees@crtconsulting.ca>
+=item Cees Hek
+=item Daniel Brunkhorst
+=item Gregory Ramsperger
 
 =back
 
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (c) 2003 by Jochen Lillich
+Copyright (c) 2003-2004 by Jochen Lillich
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.

@@ -1,7 +1,15 @@
 Revision history for Perl module CGI::Session::Auth
 
-$Id: Changes 14 2004-09-27 17:43:37Z jlillich $
+$Id: Changes 17 2004-11-12 15:16:07Z jlillich $
 
+0.23
+    Changes:
+    - Small changes in the POD sections
+    Fixes:
+    - Finally applied Daniels Patch to uniqueUserId
+    - Fixed trailing newline in _readUserFile (thanks to Gregory
+      Ramsperger)
+    
 0.22
 	I applied the wrong patch on DBI.pm. This version should work.
 
