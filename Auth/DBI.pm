@@ -28,7 +28,7 @@ my $COL_IPMASK = "netmask";
 
 ###########################################################
 ###
-### public methods
+### general methods
 ###
 ###########################################################
 
@@ -44,23 +44,36 @@ sub new {
     my ($params) = shift;
     
     $class = ref($class) if ref($class);
-    # parameter "DSN": DBI data source name
-    my $dsn = $params->{DSN} || croak("No DSN parameter");
-    # parameter "DBUser": database connection username
-    my $dbuser = $params->{DBUser} || '';
-    # parameter "DBPasswd": database connection password
-    my $dbpasswd = $params->{DBPasswd} || "";
-    # parameter "DBAttr": optional database connection attributes
-    my $dbattr = $params->{DBAttr} || {};
     
     # initialize parent class
     my $self = $class->SUPER::new($params);
-    # name of user data table
-    $self->{usertable} = $params->{UserTable} || 'auth_user',
-    # name of ip network table
-    $self->{iptable} = $params->{IPTable} || 'auth_ip',
+    
+    #
+    # class specific parameters
+    #
+    
+    # parameter 'DSN': DBI data source name
+    my $dsn = $params->{DSN} || croak("No DSN parameter");
+    # parameter 'DBUser': database connection username
+    my $dbuser = $params->{DBUser} || '';
+    # parameter 'DBPasswd': database connection password
+    my $dbpasswd = $params->{DBPasswd} || "";
+    # parameter 'DBAttr': optional database connection attributes
+    my $dbattr = $params->{DBAttr} || {};
+    # parameter 'UserTable': name of user data table
+    $self->{usertable} = $params->{UserTable} || 'auth_user';
+    # parameter 'GroupTable': name of user data table
+    $self->{grouptable} = $params->{GroupTable} || 'auth_group';
+    # parameter 'IPTable': name of ip network table
+    $self->{iptable} = $params->{IPTable} || 'auth_ip';
+    
+    #
+    # class members
+    #
+    
     # database handle
     $self->{dbh} = DBI->connect($dsn, $dbuser, $dbpasswd, $dbattr) or croak("DB error: " . $DBI::errstr);
+    
     # blessed are the greek
     bless($self, $class);
     
@@ -69,7 +82,166 @@ sub new {
 
 ###########################################################
 ###
-### private methods
+### backend specific methods
+###
+###########################################################
+
+###########################################################
+
+sub _login {
+    
+    ##
+    ## check username and password
+    ##
+    
+    my $self = shift;
+    my ($username, $password) = @_;
+    
+    $self->_debug("username: $username, password: $password");
+    
+    my $result = 0;
+    
+    my $query = sprintf(
+        "SELECT * FROM %s WHERE %s ='%s' AND %s = '%s'",
+        $self->{usertable},
+        $COL_USERNAME,
+        $username,
+        $COL_PASSWORD,
+        $password
+    );
+    $self->_debug("query: $query");
+    # search for username
+    my $sth = $self->_dbh->prepare($query);
+    $sth->execute or croak _dbh->errstr;
+    if (my $rec = $sth->fetchrow_hashref) {
+        $self->_debug("found user entry");
+        $self->_extractProfile($rec);
+        $result = 1;
+        $self->info("user '$username' logged in");
+    }
+    $sth->finish;
+    
+    return $result;
+}
+
+###########################################################
+
+sub _ipAuth {
+    
+    ##
+    ## authenticate by the visitors IP address
+    ##
+    
+    my $self = shift;
+    
+    require NetAddr::IP;
+    
+    my $remoteip = new NetAddr::IP($self->_cgi->remote_host);
+    $self->_debug("checking remote IP $remoteip");
+    
+    my $result = 0;
+    
+    my $query = sprintf(
+        "SELECT %s, %s, %s FROM %s",
+        $COL_IPUSERID,
+        $COL_IPADDR,
+        $COL_IPMASK,
+        $self->{iptable}
+    );
+    $self->_debug("query: $query");
+    
+    # search for username
+    my $sth = $self->_dbh->prepare($query);
+    $sth->execute or croak $self->_dbh()->errstr;
+    while (my $rec = $sth->fetchrow_hashref) {
+        
+        $self->_debug("compare IP network ", $rec->{$COL_IPADDR}, "/", $rec->{$COL_IPMASK});
+        
+        if ($remoteip->within(new NetAddr::IP( $rec->{$COL_IPADDR}, $rec->{$COL_IPMASK}))) {
+            $self->_debug("we have a winner!");
+            # get user record
+            my $user = $self->_getUserRecord($rec->{$COL_IPUSERID});
+            $self->_extractProfile($user);
+            $result = 1;
+            last;
+        }
+        else {
+            $self->_debug("no member of this network");
+        }
+        
+    }
+    $sth->finish;
+    
+    return $result;
+}
+
+###########################################################
+
+sub _loadProfile {
+    
+    ##
+    ## get user profile from database by userid
+    ##
+    
+    my $self = shift;
+    my ($userid) = @_;
+    
+    my $query = sprintf(
+        "SELECT * FROM %s WHERE userid='%s'",
+        $self->{usertable},
+        $userid
+    );
+    $self->_debug("query: $query");
+    my $sth = $self->_dbh->prepare($query);
+    $sth->execute() or croak $self->_dbh()->errstr;
+    if (my $rec = $sth->fetchrow_hashref) {
+        $self->_debug("Found user entry");
+        $self->_extractProfile($rec);
+    }
+    $sth->finish;
+}
+
+###########################################################
+
+sub saveProfile {
+
+    ##
+    ## save probably modified user profile
+    ##
+
+    my $self = shift;
+    
+    my $query = "UPDATE " . $self->{usertable} . " SET ";
+    my @values;
+    my $first = 1;
+	foreach (keys %{$self->{profile}}) {
+		if ($_ ne $COL_USERID) {
+			$query .= (($first) ? '' : ', ') . $_ . " = ?";
+			push @values, $self->{profile}{$_};
+			$first = 0;
+		}
+	}
+	$query .= " WHERE " . $COL_USERID . " = ?";
+	$self->_debug("update query: ", $query);
+
+    my $sth = $self->_dbh()->prepare($query);
+    $sth->execute(@values, $self->{userid}) or croak $self->_dbh()->errstr;
+	    
+}
+
+###########################################################
+
+sub isGroupMember {
+    
+    ##
+    ## check if user is in given group
+    ##
+    
+}
+
+###########################################################
+###
+### internal methods
 ###
 ###########################################################
 
@@ -84,44 +256,6 @@ sub _dbh {
     my $self = shift;
     
     return $self->{dbh};
-}
-
-###########################################################
-
-sub _login {
-    
-    ##
-    ## check username and password
-    ##
-    
-    my $self = shift;
-    my ($username, $password) = @_;
-    
-    $self->debug("username: $username, password: $password");
-    
-    my $result = 0;
-    
-    my $query = sprintf(
-        "SELECT * FROM %s WHERE %s ='%s' AND %s = '%s'",
-        $self->{usertable},
-        $COL_USERNAME,
-        $username,
-        $COL_PASSWORD,
-        $password
-    );
-    $self->debug("query: $query");
-    # search for username
-    my $sth = $self->_dbh->prepare($query);
-    $sth->execute or croak _dbh->errstr;
-    if (my $rec = $sth->fetchrow_hashref) {
-        $self->debug("found user entry");
-        $self->_extractProfile($rec);
-        $result = 1;
-        $self->info("user '$username' logged in");
-    }
-    $sth->finish;
-    
-    return $result;
 }
 
 ###########################################################
@@ -152,7 +286,7 @@ sub _getUserRecord {
     my $self = shift;
     my ($userid) = @_;
     
-    $self->debug("get data for userid: ", $userid);
+    $self->_debug("get data for userid: ", $userid);
     
     my $query = sprintf(
         "SELECT * FROM %s WHERE %s='%s'",
@@ -160,90 +294,12 @@ sub _getUserRecord {
         $COL_USERID,
         $userid
     );
-    $self->debug("query: $query");
+    $self->_debug("query: $query");
     # search for username
     my $sth = $self->_dbh->prepare($query);
     $sth->execute or croak _dbh->errstr;
     
     return $sth->fetchrow_hashref;
-}
-
-###########################################################
-
-sub _ipAuth {
-    
-    ##
-    ## authenticate by the visitors IP address
-    ##
-    
-    my $self = shift;
-    
-    require NetAddr::IP;
-    
-    my $remoteip = new NetAddr::IP($self->_cgi->remote_host);
-    $self->debug("checking remote IP $remoteip");
-    
-    my $result = 0;
-    
-    my $query = sprintf(
-        "SELECT %s, %s, %s FROM %s",
-        $COL_IPUSERID,
-        $COL_IPADDR,
-        $COL_IPMASK,
-        $self->{iptable}
-    );
-    $self->debug("query: $query");
-    
-    # search for username
-    my $sth = $self->_dbh->prepare($query);
-    $sth->execute or croak _dbh->errstr;
-    while (my $rec = $sth->fetchrow_hashref) {
-        
-        $self->debug("compare IP network ", $rec->{$COL_IPADDR}, "/", $rec->{$COL_IPMASK});
-        
-        if ($remoteip->within(new NetAddr::IP( $rec->{$COL_IPADDR}, $rec->{$COL_IPMASK}))) {
-            $self->debug("we have a winner!");
-            # get user record
-            my $user = $self->_getUserRecord($rec->{$COL_IPUSERID});
-            $self->_extractProfile($user);
-            $result = 1;
-            last;
-        }
-        else {
-            $self->debug("no member of this network");
-        }
-        
-    }
-    $sth->finish;
-    
-    return $result;
-}
-
-
-###########################################################
-
-sub _loadProfile {
-    
-    ##
-    ## get user profile from database by userid
-    ##
-    
-    my $self = shift;
-    my ($userid) = @_;
-    
-    my $query = sprintf(
-        "SELECT * FROM %s WHERE userid='%s'",
-        $self->{usertable},
-        $userid
-    );
-    $self->debug("query: $query");
-    my $sth = $self->_dbh->prepare($query);
-    $sth->execute();
-    if (my $rec = $sth->fetchrow_hashref) {
-        $self->debug("Found user entry");
-        $self->_extractProfile($rec);
-    }
-    $sth->finish;
 }
 
 ###########################################################
@@ -261,24 +317,25 @@ CGI::Session::Auth::DBI - Authenticated sessions for CGI scripts
 
 =head1 SYNOPSIS
 
-use CGI;
-use CGI::Session;
-use CGI::Session::Auth::DBI;
+  use CGI;
+  use CGI::Session;
+  use CGI::Session::Auth::DBI;
 
-my $cgi = new CGI;
-my $session = new CGI::Session(undef, $cgi, {Directory=>'/tmp'});
-my $auth = new CGI::Session::Auth({
-    CGI => $cgi,
-    Session => $session,
-    DSN => 'dbi:mysql:host=localhost,database=cgiauth',
-});
-
-if ($auth->loggedIn) {
-    showSecretPage;
-}
-else {
-    showLoginPage;
-}
+  my $cgi = new CGI;
+  my $session = new CGI::Session(undef, $cgi, {Directory=>'/tmp'});
+  my $auth = new CGI::Session::Auth({
+      CGI => $cgi,
+      Session => $session,
+      DSN => 'dbi:mysql:host=localhost,database=cgiauth',
+  });
+  $auth->authenticate();
+  
+  if ($auth->loggedIn) {
+      showSecretPage;
+  }
+  else {
+      showLoginPage;
+  }
 
 
 

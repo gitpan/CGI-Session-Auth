@@ -29,7 +29,7 @@ sub setup {
 		Session => $session
 	});
 	$self->param('_auth' => $auth);
-	$auth->init();
+	$auth->authenticate();
 	
 	# send session cookie	
 	$self->header_props( -cookie => $auth->sessionCookie() );

@@ -31,6 +31,9 @@ This software is still in alpha status. It's meant only to show its basic functi
 Features and interface are subject to change. If you want to use CGI::Session::Auth
 in a production environment, please wait for version 1.0.
 
+Assistance in the development of this modules is encouraged and greatly appreciated! 
+Please contact me at mailto:jl@teamlinux.de!
+
 INSTALLATION
 
 To install this module type the following:

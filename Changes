@@ -1,9 +1,23 @@
 Revision history for Perl module CGI::Session::Auth
 
-$Id: Changes,v 1.4 2003/09/26 07:29:19 jlillich Exp $
+$Id: Changes,v 1.5 2003/09/26 13:52:04 jlillich Exp $
 
+0.14
+	Additions:
+	- File.pm: new subclass using file based storage
+	Changes:
+	- Auth.pm: Renamed method 'init()' to 'authenticate()'
+	- Auth.pm: Renamed method 'checkUsername()' to 'hasUsername()'
+	- Auth.pm: Renamed method 'checkGroup()' to 'isGroupMember()'
+	- Auth.pm: Renamed method 'debug()' to '_debug()'
+	- Auth.pm: Renamed method 'info()' to '_info()'
+	- Auth.pm: Improved POD section.
+	- DBI.pm: Improved POD section.
+	Fixes:
+	- Makefile.PL: modules CGI and CGI::Session added to prerequisites
+	
 0.13
-	Sorry, I totally forgot "make test"!
+	Sorry, I totally forgot to "make test"!
 
 0.12
 	Changes:

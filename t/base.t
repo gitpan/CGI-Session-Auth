@@ -1,18 +1,21 @@
-use Test::More tests => 13;
+use Test::More;
+
+eval "use CGI";                                                                                                   
+if ($@) {                                                                                                         
+	plan skip_all => "no CGI module";
+}
+
+eval "use CGI::Session";                                                                                                   
+if ($@) {                                                                                                         
+	plan skip_all => "no CGI module";
+}
+
+plan tests => 12;
 
 BEGIN { 
 	use_ok('CGI::Session::Auth');
 }
 require_ok('CGI::Session::Auth');
-
-eval "use CGI";                                                                                                   
-if ($@) {                                                                                                         
-    skip_all("no CGI module");                                                                                    
-}
-eval "use CGI::Session";                                                                                                   
-if ($@) {                                                                                                         
-    skip_all("no CGI::Session module");                                                                                    
-}
 
 my $cgi = new CGI;
 my $session = new CGI::Session(undef, $cgi, {Directory=>'/tmp'});
@@ -29,7 +32,7 @@ sub _auth {
 	my $auth = _auth;
 	isa_ok($auth, 'CGI::Session::Auth');
 	can_ok($auth, 'new');
-	can_ok($auth, 'init');
+	can_ok($auth, 'authenticate');
 	can_ok($auth, 'loggedIn');
 	can_ok($auth, 'profile');
 	can_ok($auth, 'logout');

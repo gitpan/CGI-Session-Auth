@@ -31,7 +31,7 @@ sub setup {
 		DoIPAuth => 1,
 	});
 	$self->param('_auth' => $auth);
-	$auth->init();
+	$auth->authenticate();
 
 	# send session cookie	
 	$self->header_props( -cookie => $auth->sessionCookie() );
