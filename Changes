@@ -1,7 +1,20 @@
 Revision history for Perl module CGI::Session::Auth
 
-$Id: Changes,v 1.7 2003/11/19 08:36:22 jlillich Exp $
+$Id: $
 
+0.20
+    I finally included the patch that Cees Heek sent me 11/2003 -- I'm
+    really sorry for the incredible delay.
+
+    Additions:
+    - File.pm: group support
+    Fixes:
+    - DBI.pm: fixed wrong error handling call
+    - DBI.pm: SQL calls use placeholders to avoid SQL injection attacks
+
+0.16
+	Corrected call to _info() in Auth/DBI.pm
+	
 0.15
 	Patch by Cees Hek <cees@crtconsulting.ca> to allow for using CGI::Simple as
 	a lightweight replacement for CGI

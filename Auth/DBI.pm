@@ -102,22 +102,20 @@ sub _login {
     my $result = 0;
     
     my $query = sprintf(
-        "SELECT * FROM %s WHERE %s ='%s' AND %s = '%s'",
+        "SELECT * FROM %s WHERE %s = ? AND %s = ?",
         $self->{usertable},
         $COL_USERNAME,
-        $username,
-        $COL_PASSWORD,
-        $password
+        $COL_PASSWORD
     );
     $self->_debug("query: $query");
     # search for username
     my $sth = $self->_dbh->prepare($query);
-    $sth->execute or croak _dbh->errstr;
+    $sth->execute($username, $password) or croak $self->_dbh->errstr;
     if (my $rec = $sth->fetchrow_hashref) {
         $self->_debug("found user entry");
         $self->_extractProfile($rec);
         $result = 1;
-        $self->info("user '$username' logged in");
+        $self->_info("user '$username' logged in");
     }
     $sth->finish;
     
@@ -187,13 +185,12 @@ sub _loadProfile {
     my ($userid) = @_;
     
     my $query = sprintf(
-        "SELECT * FROM %s WHERE userid='%s'",
-        $self->{usertable},
-        $userid
+        "SELECT * FROM %s WHERE userid = ?",
+        $self->{usertable}
     );
     $self->_debug("query: $query");
     my $sth = $self->_dbh->prepare($query);
-    $sth->execute() or croak $self->_dbh()->errstr;
+    $sth->execute($userid) or croak $self->_dbh()->errstr;
     if (my $rec = $sth->fetchrow_hashref) {
         $self->_debug("Found user entry");
         $self->_extractProfile($rec);
@@ -289,15 +286,14 @@ sub _getUserRecord {
     $self->_debug("get data for userid: ", $userid);
     
     my $query = sprintf(
-        "SELECT * FROM %s WHERE %s='%s'",
+        "SELECT * FROM %s WHERE %s = ?",
         $self->{usertable},
-        $COL_USERID,
-        $userid
+        $COL_USERID
     );
     $self->_debug("query: $query");
     # search for username
     my $sth = $self->_dbh->prepare($query);
-    $sth->execute or croak _dbh->errstr;
+    $sth->execute($userid) or croak _dbh->errstr;
     
     return $sth->fetchrow_hashref;
 }
