@@ -19,14 +19,22 @@ sub setup {
     	'logout' => 'showLogoutPage',
 	);
 	
-	$self->param('_session' => new CGI::Session(undef, $self->query, {Directory=>'/tmp'}));
-	$self->param('_auth' => new CGI::Session::Auth::DBI({
+	# new session object
+	my $session = new CGI::Session(undef, $self->query, {Directory=>'/tmp'});
+	$self->param('_session' => $session);
+	
+	# new authentication object
+	my $auth = new CGI::Session::Auth({
 		CGI => $self->query,
 		Session => $self->param('_session'),
 		DSN => "dbi:mysql:host=localhost;database=cgiauth",
 		DoIPAuth => 1,
-	}));
-	$self->param('_auth')->init();
+	});
+	$self->param('_auth' => $auth);
+	$auth->init();
+
+	# send session cookie	
+	$self->header_props( -cookie => $auth->sessionCookie() );
 }
 
 sub _auth {

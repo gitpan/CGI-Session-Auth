@@ -1,5 +1,11 @@
 Revision history for Perl extension CGI::Session::Auth.
 
+0.11 
+	- changes in CGI::Session::Auth and subclasses:
+		- replaced _sendSessionCookie() with sessionCookie().
+			It can't be the job of the module to send the cookie, 
+			the application has to take care of that.
+		
 0.10  2003-09-16 23:52:12
 	- alpha version of CGI::Session::Auth
 		- fake class, works with only one user account: guest/guest

@@ -16,7 +16,7 @@ use warnings;
 use Carp;
 use DBI;
 
-our $VERSION = '0.1';
+our $VERSION = '0.11';
 
 # logging
 use Log::Log4perl qw( get_logger );

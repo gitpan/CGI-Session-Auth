@@ -18,10 +18,21 @@ sub setup {
     	'secret' => 'showSecretPage',
     	'logout' => 'showLogoutPage',
 	);
+
+	# new session object
+	my $session = new CGI::Session(undef, $self->query, {Directory=>'/tmp'});
+	$self->param('_session' => $session);
 	
-	$self->param('_session' => new CGI::Session(undef, $self->query, {Directory=>'/tmp'}));
-	$self->param('_auth' => new CGI::Session::Auth({ CGI => $self->query, Session => $self->param('_session') }));
-	$self->param('_auth')->init();
+	# new authentication object
+	my $auth = new CGI::Session::Auth({
+		CGI => $self->query,
+		Session => $session
+	});
+	$self->param('_auth' => $auth);
+	$auth->init();
+	
+	# send session cookie	
+	$self->header_props( -cookie => $auth->sessionCookie() );
 }
 
 sub _auth {
