@@ -1,0 +1,9 @@
+Auth.pm
+Changes
+Makefile.PL
+MANIFEST
+README
+t/base.t
+Auth/DBI.pm
+examples/testapp.pl
+examples/testapp-dbi.pl

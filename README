@@ -1,0 +1,64 @@
+CGI/Session/Auth version 0.01
+=============================
+$Id: README,v 1.3 2003/09/17 09:08:04 jlillich Exp $
+
+CGI::Session::Auth is a Perl class that provides the necessary
+functions for authentication in CGI scripts. It uses CGI::Session
+for session management and supports flat file and DBI database
+backends.
+
+CGI::Session::Auth offers an alternative approach to HTTP 
+authentication. Its goal is to integrate the authentication
+process into the web application as seamless as possible while keeping
+the programming interface simple.
+
+Users can authenticate themselves by entering their user
+name and password into a login form. This is the most common way 
+of authenticating a web site visitor.
+
+Alternatively, a user can automatically be authenticated by his IP address.
+This is useful when authorized users can't be bothered to log in manually
+but can be identified by a range of fixed IP addresses.
+
+CGI::Session::Auth manages a profile for every user account, 
+containing his user name, his password and his user id. The user id is
+a 32-character string unique for every user. A user profile can contain 
+additional fields for arbitrary data.
+
+WARNING
+
+This software is still in alpha status. It's meant only to show its basic functionality.
+Features and interface are subject to change. If you want to use CGI::Session::Auth
+in a production environment, please wait for version 1.0.
+
+INSTALLATION
+
+To install this module type the following:
+
+   perl Makefile.PL
+   make
+   make test
+   make install
+
+DEPENDENCIES
+
+This module requires these other modules and libraries:
+
+  CGI::Session
+  NetAddr::IP
+  DBI (in CGI::Session::Auth::DBI)
+
+DOCUMENTATION
+
+Module documentation is provided as POD. See the examples/ directory
+for small usage examples. For further information (mailing lists, FAQ, etc.), 
+see the module web site:
+
+http://geewiz.teamlinux.de/projects/perl/cgi-session-auth
+
+COPYRIGHT AND LICENCE
+
+Copyright (c) 2003 Jochen Lillich <jl@teamlinux.de>
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself. 
