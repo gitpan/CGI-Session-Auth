@@ -1,6 +1,6 @@
 CGI/Session/Auth version 0.01
 =============================
-$Id: README,v 1.4 2003/10/31 08:28:30 jlillich Exp $
+$Id: $
 
 CGI::Session::Auth is a Perl class that provides the necessary
 functions for authentication in CGI scripts. It uses CGI::Session
@@ -32,7 +32,7 @@ Features and interface are subject to change. If you want to use CGI::Session::A
 in a production environment, please wait for version 1.0.
 
 Assistance in the development of this modules is encouraged and greatly appreciated! 
-Please contact me at mailto:jl@teamlinux.de!
+Please contact me at mailto:jochen@lillich.info!
 
 INSTALLATION
 

@@ -1,6 +1,9 @@
 Revision history for Perl module CGI::Session::Auth
 
-$Id: $
+$Id: Changes 14 2004-09-27 17:43:37Z jlillich $
+
+0.22
+	I applied the wrong patch on DBI.pm. This version should work.
 
 0.20
     I finally included the patch that Cees Heek sent me 11/2003 -- I'm

@@ -4,7 +4,7 @@
 # Copyright (c) 2003 Jochen Lillich <jl@teamlinux.de>
 ###########################################################
 #
-# $Id: File.pm,v 1.1 2003/10/31 08:28:33 jlillich Exp $
+# $Id: File.pm 14 2004-09-27 17:43:37Z jlillich $
 #
 
 package CGI::Session::Auth::File;
