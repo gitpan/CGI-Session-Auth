@@ -4,7 +4,7 @@ use ExtUtils::MakeMaker;
 # the contents of the Makefile that is written.
 WriteMakefile(
     'NAME'		=> 'CGI::Session::Auth',
-    'VERSION'	=> '0.12',
+    'VERSION'	=> '0.13',
     PREREQ_PM   => {
         'Digest::MD5' => '0', 
     },

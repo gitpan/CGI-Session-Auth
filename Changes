@@ -1,6 +1,9 @@
 Revision history for Perl module CGI::Session::Auth
 
-$Id: $
+$Id: Changes,v 1.4 2003/09/26 07:29:19 jlillich Exp $
+
+0.13
+	Sorry, I totally forgot "make test"!
 
 0.12
 	Changes:

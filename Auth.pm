@@ -4,7 +4,7 @@
 # Copyright (c) 2003 Jochen Lillich <jl@teamlinux.de>
 ###########################################################
 #
-# $Id: Auth.pm,v 1.4 2003/09/20 19:24:19 jlillich Exp $
+# $Id: Auth.pm,v 1.5 2003/09/26 07:29:19 jlillich Exp $
 #
 
 package CGI::Session::Auth;
@@ -22,7 +22,7 @@ our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
 our @EXPORT = qw(
 );
 
-our $VERSION = do { my @r = (q$Revision: 1.4 $ =~ /\d+/g); sprintf "%d." . "%03d" x (scalar @r - 1), @r; };
+our $VERSION = do { my @r = (q$Revision: 1.5 $ =~ /\d+/g); sprintf "%d." . "%03d" x (scalar @r - 1), @r; };
 
 ###########################################################
 ###

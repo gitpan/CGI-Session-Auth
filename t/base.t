@@ -1,4 +1,4 @@
-use Test::More tests => 14;
+use Test::More tests => 13;
 
 BEGIN { 
 	use_ok('CGI::Session::Auth');
@@ -32,7 +32,6 @@ sub _auth {
 	can_ok($auth, 'init');
 	can_ok($auth, 'loggedIn');
 	can_ok($auth, 'profile');
-	can_ok($auth, 'save');
 	can_ok($auth, 'logout');
 }
 
@@ -41,10 +40,10 @@ sub _auth {
 	my $auth = _auth;
 	can_ok($auth, '_loggedIn');
 	$auth->_loggedIn(0);
-	is($auth->loggedIn, 0, 'public login status unset');
-	is($auth->_loggedIn, 0, 'internal login status unset');
+	is($auth->loggedIn(), 0, 'public login status unset');
+	is($auth->_loggedIn(), 0, 'internal login status unset');
 	$auth->_loggedIn(1);
-	is($auth->loggedIn, 1, 'public login status unset');
-	is($auth->_loggedIn, 1, 'internal login status unset');
+	is($auth->loggedIn(), 1, 'public login status unset');
+	is($auth->_loggedIn(), 1, 'internal login status unset');
 }
 
