@@ -7,3 +7,4 @@ t/base.t
 Auth/DBI.pm
 examples/testapp.pl
 examples/testapp-dbi.pl
+META.yml                                 Module meta-data

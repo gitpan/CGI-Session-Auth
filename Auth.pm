@@ -3,8 +3,8 @@
 # Authenticated sessions for CGI scripts
 # Copyright (c) 2003 Jochen Lillich <jl@teamlinux.de>
 ###########################################################
-# 
-# $Id: Auth.pm,v 1.3 2003/09/17 09:08:04 jlillich Exp $
+#
+# $Id: Auth.pm,v 1.4 2003/09/20 19:24:19 jlillich Exp $
 #
 
 package CGI::Session::Auth;
@@ -22,38 +22,23 @@ our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
 our @EXPORT = qw(
 );
 
-our $VERSION = '0.11';
+our $VERSION = do { my @r = (q$Revision: 1.4 $ =~ /\d+/g); sprintf "%d." . "%03d" x (scalar @r - 1), @r; };
 
-# logging
-my $LOGLEVEL = 'DEBUG';
-use Log::Log4perl qw( get_logger );
-my $conf = {
-	'log4perl.category.CGI.Session.Auth' => "$LOGLEVEL, Logfile",
-	'log4perl.appender.Logfile' => 'Log::Dispatch::File',
-	'log4perl.appender.Logfile.filename' => '/tmp/cgi-session-auth.log',
-	'log4perl.appender.Logfile.layout' => 'Log::Log4perl::Layout::PatternLayout',
-	'log4perl.appender.Logfile.layout.ConversionPattern' => '[%d] %F{1} %M (%L): %m %n',
-};
-Log::Log4perl::init($conf);
-my $logger = get_logger("CGI::Session::Auth");
-    
 ###########################################################
 ###
 ### public methods
 ###
 ###########################################################
-         
+
 ###########################################################
 
 sub new {
-
-###########################################################
-#
-# class constructor
-#
-# see POD below
-#
-
+    
+    ##
+    ## class constructor
+    ## see POD below
+    ##
+    
     my $class = shift;
     my ($params) = @_;
     
@@ -61,22 +46,24 @@ sub new {
     # check required params
     my %classParams = (
         Session => 'CGI::Session',
-        CGI => 'CGI'
+        CGI => 'CGI',
     );
     foreach (keys %classParams) {
-        croak "Missing $_ option" unless exists $params->{$_};
-        croak "$_ option is no $classParams{$_} object" unless $params->{$_}->isa($classParams{$_});
+        croak "Missing $_ parameter" unless exists $params->{$_};
+        croak "$_ parameter is no $classParams{$_} object" unless $params->{$_}->isa($classParams{$_});
     }
     
     my $self = {
-    	# parameter "Session": CGI::Session object
+        # parameter "Session": CGI::Session object
         session => $params->{Session},
         # parameter "CGI": CGI object
         cgi => $params->{CGI},
         # parameter "LoginVarPrefix": prefix of login form variables (default: 'log_')
         lvprefix => $params->{LoginVarPrefix} || 'log_',
-        # parameter "DoIPAuth": enable IP address based authentication (default: 0)
-        ipauth => $params->{DoIPAuth} || 0,
+        # parameter "IPAuth": enable IP address based authentication (default: 0)
+        ipauth => $params->{IPAuth} || 0,
+        # parameter "Log": enable logging (default: 0)
+        log => $params->{Log} || 0,
         
         # the current URL
         url => $params->{CGI}->url,
@@ -86,33 +73,71 @@ sub new {
         userid => '',
         # user profile data
         profile => {},
+        # Log::Log4perl logger, see "log" above
+		logger => undef,
     };
+    
     bless $self, $class;
-
+    
+    if ( $self->{log}) {
+    	require Log::Log4perl;
+		$self->{logger} = Log::Log4perl->get_logger($class);
+		$self->debug("logging enabled");
+    }
+    
     return $self;
+}
+
+###########################################################
+
+sub debug {
+	
+	##
+	## log debug message
+	##
+	
+	my $self = shift;
+	
+	$self->{logger}->debug(@_) if $self->{logger};
+}
+
+###########################################################
+
+sub info {
+	
+	##
+	## log info message
+	##
+	
+	my $self = shift;
+	
+	$self->{logger}->info(@_) if $self->{logger};
 }
 
 ###########################################################
 
 sub init {
 
-###########################################################
+	##
+    ## initialize and authenticate
+	##
+	
     my $self = shift;
     
     # is this already a session by an authorized user?
     if ( $self->_session->param("~logged-in") ) {
-    	$logger->debug("User is already logged in in this session");
-    	# set flag
-    	$self->_loggedIn(1);
-    	# load user profile
-		my $userid = $self->_session->param('~userid');
-		$self->_loadProfile($userid);
+        $self->debug("User is already logged in in this session");
+        # set flag
+        $self->_loggedIn(1);
+        # load user profile
+        my $userid = $self->_session->param('~userid');
+        $self->_loadProfile($userid);
         return 1;
     }
-	else {
-		$logger->debug("User is not logged in in this session");
-		# reset flag
-		$self->_loggedIn(0);
+    else {
+        $self->debug("User is not logged in in this session");
+        # reset flag
+        $self->_loggedIn(0);
     }
     
     # maybe someone's trying to log in?
@@ -120,33 +145,33 @@ sub init {
     my $lg_pass = $self->_cgi->param( $self->{lvprefix} . "password" );
     
     if ($lg_name && $lg_pass) {
-	    # Yes! Login data coming in.
-	    $logger->debug("User trying to log in");
+        # Yes! Login data coming in.
+        $self->debug("User trying to log in");
         if ($self->_login( $lg_name, $lg_pass )) {
-        	$logger->debug("login successful, userid: ", $self->{userid});
-	    	$self->_loggedIn(1);
+            $self->debug("login successful, userid: ", $self->{userid});
+            $self->_loggedIn(1);
             $self->_session->param("~userid", $self->{userid});
             $self->_session->clear(["~login-trials"]);
             return 1;
         }
         else {
             # the login seems to have failed :-(
-            $logger->debug("Login failed");
+            $self->debug("Login failed");
             my $trials = $self->_session->param("~login-trials") || 0;
             return $self->_session->param("~login-trials", ++$trials);
         }
     }
-        
+    
     # or maybe we can authenticate the visitor by his IP address?
     if ($self->{ipauth}) {
-    	# we may check the IP
-    	if ($self->_ipAuth) {
-        	$logger->debug("IP authentication successful, userid: ", $self->{userid});
-	    	$self->_loggedIn(1);
+        # we may check the IP
+        if ($self->_ipAuth) {
+            $self->debug("IP authentication successful, userid: ", $self->{userid});
+            $self->_loggedIn(1);
             $self->_session->param("~userid", $self->{userid});
             $self->_session->clear(["~login-trials"]);
-			return 1;
-    	}
+            return 1;
+        }
     }
     
 }
@@ -154,81 +179,74 @@ sub init {
 ###########################################################
 
 sub loggedIn {
-
-###########################################################
-#
-# get internal logged-in flag
-#
-
-	my $self = shift;
-
-	return $self->_loggedIn;	
+    
+    ##
+    ## get internal logged-in flag
+    ##
+    
+    my $self = shift;
+    
+    return $self->_loggedIn;
 }
 
 ###########################################################
 
 sub profile {
-
-###########################################################
-#
-# accessor to user profile fields
-#
-
-	my $self = shift;
-	my $key = shift;
-	
-	if (@_) {
-		my $value = shift;
-		$self->{profile}{$key} = $value;
-	}
-	
-	return $self->{profile}{$key};
+    
+    ##
+    ## accessor to user profile fields
+    ##
+    
+    my $self = shift;
+    my $key = shift;
+    
+    if (@_) {
+        my $value = shift;
+        $self->{profile}{$key} = $value;
+    }
+    
+    return $self->{profile}{$key};
 }
-	
+
 ###########################################################
 
 sub checkUsername {
-
-###########################################################
-#
-# check for given user name
-#
-
-	my $self = shift;
-	my ($username) = @_;
-	
-	return ($self->{profile}{username} eq $username);
+    
+    ##
+    ## check for given user name
+    ##
+    
+    my $self = shift;
+    my ($username) = @_;
+    
+    return ($self->{profile}{username} eq $username);
 }
 
 ###########################################################
 
 sub checkGroup {
-
-###########################################################
-#
-# check if user is in given group
-#
-
-	# abstract class w/o group functions, for real applications use a subclass
-	return 0;
+    
+    ##
+    ## check if user is in given group
+    ##
+    
+    # abstract class w/o group functions, for real applications use a subclass
+    return 0;
 }
 
 ###########################################################
 
 sub logout {
-
-###########################################################
-#
-# revoke users logged-in status
-#
-
-	my $self = shift;
-	
-	$self->_loggedIn(0);
-	$logger->info("User '", $self->{profile}{username}, "' logged out");
+    
+    ##
+    ## revoke users logged-in status
+    ##
+    
+    my $self = shift;
+    
+    $self->_loggedIn(0);
+    $self->info("User '", $self->{profile}{username}, "' logged out");
 }
-
-
 
 ###########################################################
 ###
@@ -239,97 +257,91 @@ sub logout {
 ###########################################################
 
 sub sessionCookie {
-
-###########################################################
-#
-# make cookie with session id
-#
-
-	my $self = shift;
-	
-	my $cookie = $self->_cgi->cookie(CGISESSID => $self->_session->id );
-	return $cookie;
+    
+    ##
+    ## make cookie with session id
+    ##
+    
+    my $self = shift;
+    
+    my $cookie = $self->_cgi->cookie(CGISESSID => $self->_session->id );
+    return $cookie;
 }
 
 ###########################################################
 
 sub _session {
-
-###########################################################
-#
-# get reference on CGI::Session object
-#
-
-	my $self = shift;
-	
-	return $self->{session};
+    
+    ##
+    ## get reference on CGI::Session object
+    ##
+    
+    my $self = shift;
+    
+    return $self->{session};
 }
 
 ###########################################################
 
 sub _cgi {
-
-###########################################################
-#
-# get reference on CGI object
-#
-
-	my $self = shift;
-	
-	return $self->{cgi};
+    
+    ##
+    ## get reference on CGI object
+    ##
+    
+    my $self = shift;
+    
+    return $self->{cgi};
 }
 
 ###########################################################
 
 sub _uniqueUserID {
-
-###########################################################
-#
-# generate a unique 32-character user ID
-#
-
-	my $self = shift;
-	my ($username) = @_;
-	
-	return md5_hex(localtime, $username);
+    
+    ##
+    ## generate a unique 32-character user ID
+    ##
+    
+    my $self = shift;
+    my ($username) = @_;
+    
+    return md5_hex(localtime, $username);
 }
 
 ###########################################################
 
 sub _loggedIn {
-
-###########################################################
-#
-# accessor to internal logged-in flag and session parameter
-#
-
-	my $self = shift;
-
-	if (@_) {
-		# set internal flag
-		if ($self->{logged_in} = shift) {
-			# set session parameter
+    
+    ##
+    ## accessor to internal logged-in flag and session parameter
+    ##
+    
+    my $self = shift;
+    
+    if (@_) {
+        # set internal flag
+        if ($self->{logged_in} = shift) {
+            # set session parameter
             $self->_session->param("~logged-in", 1);
-		}
-		else {
-			# clear session parameter
-			$self->_session->clear(["~logged-in"]);
-		}
-		$logger->debug("(re)set logged_in: ", $self->{logged_in});
-	}	
-
-	# return internal flag	
-	return $self->{logged_in};
+        }
+        else {
+            # clear session parameter
+            $self->_session->clear(["~logged-in"]);
+        }
+        $self->debug("(re)set logged_in: ", $self->{logged_in});
+    }
+    
+    # return internal flag
+    return $self->{logged_in};
 }
 
 ###########################################################
 
 sub _url {
-
-###########################################################
-	my $self = shift;
-	
-	return $self->{url};
+    
+    my $self = shift;
+    
+    return $self->{url};
 }
 
 ###########################################################
@@ -343,61 +355,59 @@ sub _url {
 ###########################################################
 
 sub _login {
-
-###########################################################
-#
-# check login credentials and load user profile
-#
-
-	my $self = shift;
-	my ($username, $password) = @_;
-
-	# allow only the guest user, for real applications use a subclass
-	if ( ($username eq 'guest') && ( $password eq 'guest' ) ) {
-		$logger->info("User '$username' logged in");
-		$self->{userid} = "guest";
-		$self->_loadProfile($self->{userid});
-		return 1;
-	}
-			
-	return 0;
+    
+    ##
+    ## check login credentials and load user profile
+    ##
+    
+    my $self = shift;
+    my ($username, $password) = @_;
+    
+    # allow only the guest user, for real applications use a subclass
+    if ( ($username eq 'guest') && ( $password eq 'guest' ) ) {
+        $self->info("User '$username' logged in");
+        $self->{userid} = "guest";
+        $self->_loadProfile($self->{userid});
+        return 1;
+    }
+    
+    return 0;
 }
 
 
 ###########################################################
 
 sub _ipAuth {
-
-###########################################################
-#
-# authenticate by the visitors IP address
-#
-
-	return 0;
+    
+    ##
+    ## authenticate by the visitors IP address
+    ##
+    
+    return 0;
 }
 
 ###########################################################
 
 sub _loadProfile {
-
-###########################################################
-#
-# load the user profile for a given user id
-#
-
-	my $self = shift;
-	my ($userid) = @_;
-
-	# store some dummy values, for real applications use a subclass
-	$self->{userid} = $userid;
-	$self->{profile}{username} = 'guest';
+    
+    ##
+    ## load the user profile for a given user id
+    ##
+    
+    my $self = shift;
+    my ($userid) = @_;
+    
+    # store some dummy values, for real applications use a subclass
+    $self->{userid} = $userid;
+    $self->{profile}{username} = 'guest';
 }
 
 ###########################################################
 ###
-### module documentation
+### end of code, module documentation below
 ###
 ###########################################################
+
 1;
 __END__
 
@@ -407,51 +417,55 @@ CGI::Session::Auth - Authenticated sessions for CGI scripts
 
 =head1 SYNOPSIS
 
-  use CGI;
-  use CGI::Session;
-  use CGI::Session::Auth;
+use CGI;
+use CGI::Session;
+use CGI::Session::Auth;
 
-  # CGI object for headers, cookies, etc.
-  my $cgi = new CGI;
-  
-  # CGI::Session object for session handling
-  my $session = new CGI::Session(undef, $cgi, {Directory=>'/tmp'});
-  
-  # CGI::Session::Auth object for authentication
-  my $auth = new CGI::Session::Auth({ CGI => $cgi, Session => $session });
+# CGI object for headers, cookies, etc.
+my $cgi = new CGI;
 
-  # check if visitor has already logged in
-  if ($auth->loggedIn) {
-  	showSecretPage;
-  }
-  else {
-  	showLoginPage;
-  }
+# CGI::Session object for session handling
+my $session = new CGI::Session(undef, $cgi, {Directory=>'/tmp'});
+
+# CGI::Session::Auth object for authentication
+my $auth = new CGI::Session::Auth({ CGI => $cgi, Session => $session });
+
+# check if visitor has already logged in
+if ($auth->loggedIn) {
+    showSecretPage;
+}
+else {
+    showLoginPage;
+}
 
 
 
-=head1 DESCRIPTION
+=head1 ABSTRACT
 
 CGI::Session::Auth is a Perl class that provides the necessary
 functions for authentication in CGI scripts. It uses CGI::Session
 for session management and supports flat file and DBI database
 backends.
 
-CGI::Session::Auth offers an alternative approach to HTTP 
+
+
+=head1 DESCRIPTION
+
+CGI::Session::Auth offers an alternative approach to HTTP
 authentication. Its goal is to integrate the authentication
 process into the web application as seamless as possible while keeping
 the programming interface simple.
 
 Users can authenticate themselves by entering their user
-name and password into a login form. This is the most common way 
+name and password into a login form. This is the most common way
 of authenticating a web site visitor.
 
 Alternatively, a user can automatically be authenticated by his IP address.
 This is useful when authorized users can't be bothered to log in manually
 but can be identified by a range of fixed IP addresses.
 
-CGI::Session::Auth manages a profile for every user account, 
-containing his user name, his password and his user id. The user profile may 
+CGI::Session::Auth manages a profile for every user account,
+containing his user name, his password and his user id. The user profile may
 contain additional fields for arbitrary data.
 
 
@@ -494,27 +508,32 @@ Try to authenticate the visitor by his IP address. (Default: 0)
 
 A string the names of the login form fields begin with. (Default. 'log_')
 
+=item Log
+
+Set to 1 to enable logging. CGI::Session::Auth expects an initialized Log::Log4perl 
+module and gets its logger object calling Log::Log4perl->get_logger('CGI::Session::Auth').
+
 =back
 
 =head2 init()
 
 This method initializes the object and has to be called after object creation.
-It fetches session information to determine the 
+It fetches session information to determine the
 authentication status of the current visitor. C<init> further checks if form variables
 from a proceeding login form have been set and eventually performs a login attempt.
 If authentication succeeded neither by session data nor login information, and the
-parameter C<DoIPAuth> is set to a true value, C<init> tries to authenticate the visitor by his 
+parameter C<DoIPAuth> is set to a true value, C<init> tries to authenticate the visitor by his
 IP address.
 
 =head2 sessionCookie()
 
 For the session to be persistent across page requests, its session ID has to be
-stored in a cookie. This method returns the correct cookie (as generated by CGI::cookie()), 
+stored in a cookie. This method returns the correct cookie (as generated by CGI::cookie()),
 but it remains the duty of the CGI application to send it.
 
 =head2 loggedIn()
 
-This method returns a boolean value representing the current visitors authentication 
+This method returns a boolean value representing the current visitors authentication
 status.
 
 =head2 logout()
