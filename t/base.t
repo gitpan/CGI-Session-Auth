@@ -7,7 +7,7 @@ if ($@) {
 
 eval "use CGI::Session";                                                                                                   
 if ($@) {                                                                                                         
-	plan skip_all => "no CGI module";
+	plan skip_all => "no CGI::Session module";
 }
 
 plan tests => 12;

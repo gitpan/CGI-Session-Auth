@@ -4,7 +4,7 @@
 # Copyright (c) 2003 Jochen Lillich <jl@teamlinux.de>
 ###########################################################
 #
-# $Id: Auth.pm,v 1.6 2003/09/27 07:37:03 jlillich Exp $
+# $Id: Auth.pm,v 1.8 2003/11/19 08:36:22 jlillich Exp $
 #
 
 package CGI::Session::Auth;
@@ -22,7 +22,7 @@ our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
 our @EXPORT = qw(
 );
 
-our $VERSION = do { my @r = (q$Revision: 1.6 $ =~ /\d+/g); sprintf "%d." . "%03d" x (scalar @r - 1), @r; };
+our $VERSION = do { my @r = (q$Revision: 1.8 $ =~ /\d+/g); sprintf "%d." . "%03d" x (scalar @r - 1), @r; };
 
 ###########################################################
 ###
@@ -45,12 +45,13 @@ sub new {
     $class = ref($class) if ref($class);
     # check required params
     my %classParams = (
-        Session => 'CGI::Session',
-        CGI => 'CGI',
+        Session => ['CGI::Session'],
+        CGI => ['CGI', 'CGI::Simple'],
     );
-    foreach (keys %classParams) {
-        croak "Missing $_ parameter" unless exists $params->{$_};
-        croak "$_ parameter is no $classParams{$_} object" unless $params->{$_}->isa($classParams{$_});
+    foreach my $classParam (keys %classParams) {
+        croak "Missing $classParam parameter" unless exists $params->{$classParam};
+        croak "$classParam parameter is not a " . join(' or ', @{$classParams{$classParam}}) . " object"
+           unless grep { $params->{$classParam}->isa($_) } @{$classParams{$classParam}};
     }
     
     my $self = {
@@ -505,7 +506,7 @@ the following key/value pairs:
 
 =item CGI
 
-A reference to an CGI object.
+A reference to an CGI or CGI::Simple object.
 
 =item Session
 
@@ -598,6 +599,18 @@ L<http://geewiz.teamlinux.de/projects/perl/cgi-session-auth>
 =head1 AUTHOR
 
 Jochen Lillich, E<lt>jl@teamlinux.deE<gt>
+
+
+=head1 THANKS
+
+These people have helped in the development of this module:
+
+=over
+
+=item Cees Hek <cees@crtconsulting.ca>
+
+=back
+
 
 =head1 COPYRIGHT AND LICENSE
 

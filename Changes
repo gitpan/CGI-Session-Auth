@@ -1,7 +1,11 @@
 Revision history for Perl module CGI::Session::Auth
 
-$Id: Changes,v 1.5 2003/09/26 13:52:04 jlillich Exp $
+$Id: Changes,v 1.7 2003/11/19 08:36:22 jlillich Exp $
 
+0.15
+	Patch by Cees Hek <cees@crtconsulting.ca> to allow for using CGI::Simple as
+	a lightweight replacement for CGI
+	
 0.14
 	Additions:
 	- File.pm: new subclass using file based storage

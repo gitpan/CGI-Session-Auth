@@ -4,7 +4,7 @@
 # Copyright (c) 2003 Jochen Lillich <jl@teamlinux.de>
 ###########################################################
 #
-# $Id: DBI.pm,v 1.5 2003/09/26 07:29:45 jlillich Exp $
+# $Id: DBI.pm,v 1.6 2003/10/31 08:28:33 jlillich Exp $
 #
 
 package CGI::Session::Auth::DBI;
@@ -16,7 +16,7 @@ use warnings;
 use Carp;
 use DBI;
 
-our $VERSION = do { my @r = (q$Revision: 1.5 $ =~ /\d+/g); sprintf "%d." . "%03d" x (scalar @r - 1), @r; };
+our $VERSION = do { my @r = (q$Revision: 1.6 $ =~ /\d+/g); sprintf "%d." . "%03d" x (scalar @r - 1), @r; };
 
 # column names in database
 my $COL_USERID = 'userid';
