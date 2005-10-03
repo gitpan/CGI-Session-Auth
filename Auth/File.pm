@@ -3,7 +3,7 @@
 # Authenticated sessions for CGI scripts
 ###########################################################
 #
-# $Id: File.pm 17 2004-11-12 15:16:07Z jlillich $
+# $Id: File.pm 5 2005-10-03 16:16:22Z jlillich $
 #
 
 package CGI::Session::Auth::File;
@@ -14,7 +14,7 @@ use strict;
 use warnings;
 use Carp;
 
-our $VERSION = do { my @r = (q$Revision: 1.1 $ =~ /\d+/g); sprintf "%d." . "%03d" x (scalar @r - 1), @r; };
+our $VERSION = do { q$Revision: 5 $ =~ /Revision: (\d+)/); sprintf "%d", $1; };
 
 ###########################################################
 ###

@@ -20,13 +20,14 @@ Alternatively, a user can automatically be authenticated by his IP address.
 This is useful when authorized users can't be bothered to log in manually
 but can be identified by a range of fixed IP addresses.
 
-CGI::Session::Auth manages a profile for every user account, 
+CGI::Session::Auth manages a profile for every user account,
 containing his user name, his password and his user id. The user id is
-a 32-character string unique for every user. A user profile can contain 
-additional fields for arbitrary data.
+a 32-character string unique for every user. A user profile can
+contain additional fields for arbitrary data.
 
 Assistance in the development of this modules is encouraged and
-greatly appreciated!  Please contact me: jochen@lillich.info.
+greatly appreciated. Please contact me!
+
 
 INSTALLATION
 
@@ -37,6 +38,7 @@ To install this module type the following:
    make test
    make install
 
+
 DEPENDENCIES
 
 This module requires these other modules and libraries:
@@ -45,17 +47,17 @@ This module requires these other modules and libraries:
   NetAddr::IP
   DBI (in CGI::Session::Auth::DBI)
 
+
 DOCUMENTATION
 
-Module documentation is provided as POD. See the examples/ directory
-for small usage examples. For further information (mailing lists, FAQ, etc.), 
-see the module web site:
+Module documentation is provided as POD. 
 
-http://geewiz.teamlinux.de/projects/perl/cgi-session-auth
+See the examples/ subdirectory for small usage examples.
+
 
 COPYRIGHT AND LICENCE
 
-Copyright (c) 2003-2004 Jochen Lillich <jochen@lillich.info>
+Copyright (c) 2003-2005 Jochen Lillich <jochen@lillich.info>
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself. 

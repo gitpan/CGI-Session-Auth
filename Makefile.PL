@@ -4,7 +4,7 @@ use ExtUtils::MakeMaker;
 # the contents of the Makefile that is written.
 WriteMakefile(
     'NAME'		=> 'CGI::Session::Auth',
-    'VERSION'	=> '0.23',
+    'VERSION'	=> '1.0',
     PREREQ_PM   => {
         'CGI' => '0',
         'CGI::Session' => '0',
@@ -12,5 +12,5 @@ WriteMakefile(
     },
     ($] >= 5.005 ?    ## Add these new keywords supported since 5.005
       (ABSTRACT_FROM => 'Auth.pm', # retrieve abstract from module
-       AUTHOR     => 'Jochen Lillich <jl@teamlinux.de>') : ()),
+       AUTHOR     => 'Jochen Lillich <jochen@lillich.de>') : ()),
 );

@@ -3,7 +3,7 @@
 # Authenticated sessions for CGI scripts
 ###########################################################
 #
-# $Id: DBI.pm 17 2004-11-12 15:16:07Z jlillich $
+# $Id: DBI.pm 5 2005-10-03 16:16:22Z jlillich $
 #
 
 package CGI::Session::Auth::DBI;
@@ -15,7 +15,7 @@ use warnings;
 use Carp;
 use DBI;
 
-our $VERSION = do { my @r = (q$Revision: 1.6 $ =~ /\d+/g); sprintf "%d." . "%03d" x (scalar @r - 1), @r; };
+our $VERSION = do { q$Revision: 5 $ =~ /Revision: (\d+)/); sprintf "%d", $1; };
 
 ###########################################################
 ###
@@ -43,6 +43,7 @@ sub new {
     # class specific parameters
     #
 
+	# parameter 'DBHandle': use an initialized DBI database handle
     if ($params->{DBHandle}) {
       $self->{dbh} = $params->{DBHandle};
     } else {
@@ -57,6 +58,8 @@ sub new {
       # database handle
       $self->{dbh} = DBI->connect($dsn, $dbuser, $dbpasswd, $dbattr) or croak("DB error: " . $DBI::errstr);
     }
+    # parameter 'EncryptPW': passwords are MD5-encrypted (default 0)
+    $self->{encryptpw} = $params->{EncryptPW} || 0;
     # parameter 'UserTable': name of user data table
     $self->{usertable} = $params->{UserTable} || 'auth_user';
     $self->{usernamefield} = $params->{UsernameField} || 'username';
@@ -100,7 +103,12 @@ sub _login {
     my ($username, $password) = @_;
     
     $self->_debug("username: $username, password: $password");
-    
+
+    if $self->{encryptpw} {
+		$password = $self->_encpw($password);
+		$self->_debug("Encrypted password: $password");
+	}
+
     my $result = 0;
     
     my $query = sprintf(
@@ -443,7 +451,7 @@ Jochen Lillich, E<lt>jochen@lillich.infoE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2003-2004 by Jochen Lillich
+Copyright 2003-2005 by Jochen Lillich
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.

@@ -1,6 +1,17 @@
+-*- mode: text;-*-
+
 Revision history for Perl module CGI::Session::Auth
 
-$Id: Changes 17 2004-11-12 15:16:07Z jlillich $
+$Id: Changes 5 2005-10-03 16:16:22Z jlillich $
+
+1.0 (2005-10-03)
+
+	Changes:
+
+	- Added the parameter 'EncryptPW' to CGI::Session::Auth::DBI to
+	  activate the handling of MD5-encrypted passwords.
+
+	- Worked Jess' suggestions into the docs
 
 0.23
     Changes:
