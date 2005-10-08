@@ -1,11 +1,11 @@
 CGI::Session::Auth
 ==================
-$Id: $
+$Id: README 9 2005-10-08 23:00:09Z jlillich $
 
 CGI::Session::Auth is a Perl class that provides the necessary
-functions for authentication in CGI scripts. It uses CGI::Session
-for session management and supports flat file and DBI database
-backends.
+functions for authentication in CGI scripts. It uses CGI::Session for
+session management and supports several backends for credentials
+storage, such as flat file and DBI.
 
 CGI::Session::Auth offers an alternative approach to HTTP 
 authentication. Its goal is to integrate the authentication

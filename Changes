@@ -2,7 +2,13 @@
 
 Revision history for Perl module CGI::Session::Auth
 
-$Id: Changes 5 2005-10-03 16:16:22Z jlillich $
+$Id: Changes 10 2005-10-08 23:07:42Z jlillich $
+
+1.01 (2005-10-09)
+
+	 Changes:
+	 
+	 - Made another distribution with proper version numbers.
 
 1.0 (2005-10-03)
 

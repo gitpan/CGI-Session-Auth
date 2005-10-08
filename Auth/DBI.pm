@@ -3,7 +3,7 @@
 # Authenticated sessions for CGI scripts
 ###########################################################
 #
-# $Id: DBI.pm 5 2005-10-03 16:16:22Z jlillich $
+# $Id: DBI.pm 7 2005-10-03 21:01:33Z jlillich $
 #
 
 package CGI::Session::Auth::DBI;
@@ -15,7 +15,7 @@ use warnings;
 use Carp;
 use DBI;
 
-our $VERSION = do { q$Revision: 5 $ =~ /Revision: (\d+)/); sprintf "%d", $1; };
+our $VERSION = do { q$Revision: 7 $ =~ /Revision: (\d+)/; sprintf "1.%3d", $1; };
 
 ###########################################################
 ###
