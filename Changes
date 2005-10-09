@@ -2,9 +2,9 @@
 
 Revision history for Perl module CGI::Session::Auth
 
-$Id: Changes 10 2005-10-08 23:07:42Z jlillich $
+$Id: Changes 11 2005-10-08 23:59:12Z jlillich $
 
-1.01 (2005-10-09)
+1.02 (2005-10-09)
 
 	 Changes:
 	 

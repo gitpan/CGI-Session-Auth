@@ -3,7 +3,7 @@
 # Authenticated sessions for CGI scripts
 ###########################################################
 #
-# $Id: Auth.pm 7 2005-10-03 21:01:33Z jlillich $
+# $Id: Auth.pm 11 2005-10-08 23:59:12Z jlillich $
 #
 
 package CGI::Session::Auth;
@@ -21,7 +21,7 @@ our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
 our @EXPORT = qw(
 );
 
-our $VERSION = do { q$Revision: 7 $ =~ /Revision: (\d+)/; sprintf "1.%3d", $1; };
+our $VERSION = do { q$Revision: 11 $ =~ /Revision: (\d+)/; sprintf "1.%03d", $1; };
 
 ###########################################################
 ###
