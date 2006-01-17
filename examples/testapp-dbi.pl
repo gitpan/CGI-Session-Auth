@@ -24,7 +24,7 @@ sub setup {
 	$self->param('_session' => $session);
 	
 	# new authentication object
-	my $auth = new CGI::Session::Auth({
+	my $auth = new CGI::Session::Auth::DBI({
 		CGI => $self->query,
 		Session => $self->param('_session'),
 		DSN => "dbi:mysql:host=localhost;database=cgiauth",
@@ -100,7 +100,7 @@ sub showSecretData {
 <h1>Secret data</h1>
 <p><b>Hello $username!</b></p>
 <p>There's more than one way to do it!</p>
-<p><a href="testapp.pl?cmd=logout">Log out</a></p>
+<p><a href="testapp-dbi.pl?cmd=logout">Log out</a></p>
 </body>
 </html>
 HTML
@@ -116,7 +116,7 @@ sub showLogoutPage {
 <head><title>Logged out</title></head>
 <body>
 <h1>You have logged out.</h1>
-<p><a href="testapp.pl?cmd=secret">Secret page</a></p>
+<p><a href="testapp-dbi.pl?cmd=secret">Secret page</a></p>
 </body>
 </html>
 HTML

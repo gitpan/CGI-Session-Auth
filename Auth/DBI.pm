@@ -3,7 +3,7 @@
 # Authenticated sessions for CGI scripts
 ###########################################################
 #
-# $Id: DBI.pm 11 2005-10-08 23:59:12Z jlillich $
+# $Id: DBI.pm 12 2006-01-16 11:09:01Z geewiz $
 #
 
 package CGI::Session::Auth::DBI;
@@ -15,7 +15,7 @@ use warnings;
 use Carp;
 use DBI;
 
-our $VERSION = do { q$Revision: 11 $ =~ /Revision: (\d+)/; sprintf "1.%03d", $1; };
+our $VERSION = do { q$Revision: 12 $ =~ /Revision: (\d+)/; sprintf "1.%03d", $1; };
 
 ###########################################################
 ###
@@ -104,7 +104,7 @@ sub _login {
     
     $self->_debug("username: $username, password: $password");
 
-    if $self->{encryptpw} {
+    if ($self->{encryptpw}) {
 		$password = $self->_encpw($password);
 		$self->_debug("Encrypted password: $password");
 	}

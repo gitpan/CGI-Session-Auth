@@ -10,11 +10,12 @@ if ($@) {
 	plan skip_all => "no CGI::Session module";
 }
 
-plan tests => 12;
+plan tests => 13;
 
 BEGIN { 
 	use_ok('CGI::Session::Auth');
 }
+
 require_ok('CGI::Session::Auth');
 
 my $cgi = new CGI;
@@ -36,6 +37,7 @@ sub _auth {
 	can_ok($auth, 'loggedIn');
 	can_ok($auth, 'profile');
 	can_ok($auth, 'logout');
+	is($auth->_loggedIn(), 0, 'internal login status unset');
 }
 
 # login/logout
@@ -49,4 +51,3 @@ sub _auth {
 	is($auth->loggedIn(), 1, 'public login status unset');
 	is($auth->_loggedIn(), 1, 'internal login status unset');
 }
-

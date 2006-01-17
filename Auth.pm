@@ -3,7 +3,7 @@
 # Authenticated sessions for CGI scripts
 ###########################################################
 #
-# $Id: Auth.pm 11 2005-10-08 23:59:12Z jlillich $
+# $Id: Auth.pm 21 2006-01-17 18:03:45Z geewiz $
 #
 
 package CGI::Session::Auth;
@@ -21,7 +21,7 @@ our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
 our @EXPORT = qw(
 );
 
-our $VERSION = do { q$Revision: 11 $ =~ /Revision: (\d+)/; sprintf "1.%03d", $1; };
+our $VERSION = do { q$Revision: 21 $ =~ /Revision: (\d+)/; sprintf "1.%03d", $1; };
 
 ###########################################################
 ###
@@ -605,11 +605,11 @@ it will be stored in the respective profile field first.
 
 =head1 BUGS
 
-There's always one to be squished.
+Please report all bugs via the Bug Tracker on
+http://developer.berlios.de/projects/perl-c-s-auth/.
 
 Assistance in the development of this modules is encouraged and
 greatly appreciated. Please contact me!
-
 
 
 =head1 TODO
@@ -620,6 +620,7 @@ Don't get me started...
 =head1 SEE ALSO
 
 L<CGI::Session>
+L<CGI::Application::Plugin::Session>
 
 
 =head1 AUTHOR
@@ -627,7 +628,7 @@ L<CGI::Session>
 Jochen Lillich, E<lt>jochen@lillich.infoE<gt>
 
 
-=head1 THANKS
+=head1 CONTRIBUTORS
 
 These people have helped in the development of this module:
 
@@ -637,13 +638,15 @@ These people have helped in the development of this module:
 =item Daniel Brunkhorst
 =item Gregory Ramsperger
 =item Jess Robinson
+=item Simon Rees
+=item Roger Horne
 
 =back
 
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (c) 2003-2005 by Jochen Lillich
+Copyright (c) 2003-2006 by Jochen Lillich
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
