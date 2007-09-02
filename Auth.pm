@@ -3,7 +3,7 @@
 # Authenticated sessions for CGI scripts
 ###########################################################
 #
-# $Id: Auth.pm 21 2006-01-17 18:03:45Z geewiz $
+# $Id: Auth.pm 28 2007-09-02 12:49:06Z geewiz $
 #
 
 package CGI::Session::Auth;
@@ -21,7 +21,7 @@ our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
 our @EXPORT = qw(
 );
 
-our $VERSION = do { q$Revision: 21 $ =~ /Revision: (\d+)/; sprintf "1.%03d", $1; };
+our $VERSION = do { q$Revision: 28 $ =~ /Revision: (\d+)/; sprintf "1.%03d", $1; };
 
 ###########################################################
 ###
@@ -169,7 +169,7 @@ sub sessionCookie {
     
     my $self = shift;
     
-    my $cookie = $self->_cgi->cookie(CGISESSID => $self->_session->id );
+    my $cookie = $self->_cgi->cookie($self->_session->name() => $self->_session->id );
     return $cookie;
 }
 
@@ -530,7 +530,7 @@ Additionally, the following optional parameters are possible:
 
 Try to authenticate the visitor by his IP address. (Default: 0)
 
-=item lvprefix
+=item LoginVarPrefix
 
 By default, CGI::Session::Auth expects the username and password of
 the visitor to be passed in the form variables 'log_username' and
@@ -603,18 +603,21 @@ Returns the user profile field identified by C<$key>. If C<$value> is given,
 it will be stored in the respective profile field first.
 
 
+=head1 SUPPORT
+
+For further information regarding this module, please visit the 
+project website at http://developer.berlios.de/projects/perl-c-s-auth/.
+
+Questions regarding the module should be posted in the appropriate forum
+linked from the project website.
+
+
 =head1 BUGS
 
-Please report all bugs via the Bug Tracker on
-http://developer.berlios.de/projects/perl-c-s-auth/.
+Please report all bugs via the Bug Tracker on the project website.
 
 Assistance in the development of this modules is encouraged and
-greatly appreciated. Please contact me!
-
-
-=head1 TODO
-
-Don't get me started...
+greatly appreciated.
 
 
 =head1 SEE ALSO

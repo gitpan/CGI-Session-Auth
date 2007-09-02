@@ -3,7 +3,7 @@
 # Authenticated sessions for CGI scripts
 ###########################################################
 #
-# $Id: DBI.pm 12 2006-01-16 11:09:01Z geewiz $
+# $Id: DBI.pm 25 2006-02-21 12:07:26Z geewiz $
 #
 
 package CGI::Session::Auth::DBI;
@@ -15,7 +15,7 @@ use warnings;
 use Carp;
 use DBI;
 
-our $VERSION = do { q$Revision: 12 $ =~ /Revision: (\d+)/; sprintf "1.%03d", $1; };
+our $VERSION = do { q$Revision: 25 $ =~ /Revision: (\d+)/; sprintf "1.%03d", $1; };
 
 ###########################################################
 ###
@@ -355,7 +355,7 @@ CGI::Session::Auth::DBI - Authenticated sessions for CGI scripts
 
   my $cgi = new CGI;
   my $session = new CGI::Session(undef, $cgi, {Directory=>'/tmp'});
-  my $auth = new CGI::Session::Auth({
+  my $auth = new CGI::Session::Auth::DBI({
       CGI => $cgi,
       Session => $session,
       DSN => 'dbi:mysql:host=localhost,database=cgiauth',

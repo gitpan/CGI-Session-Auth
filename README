@@ -1,6 +1,6 @@
 CGI::Session::Auth
 ==================
-$Id: README 16 2006-01-17 17:20:44Z geewiz $
+$Id: README 26 2006-02-21 12:26:19Z geewiz $
 
 CGI::Session::Auth is a Perl class that provides the necessary
 functions for authentication in CGI scripts. It uses CGI::Session for
@@ -48,15 +48,25 @@ This module requires these other modules and libraries:
   DBI (in CGI::Session::Auth::DBI)
 
 
-DOCUMENTATION
+DOCUMENTATION AND SUPPORT
 
-Module documentation is provided as POD. 
+Module documentation is provided as POD.
 
 See the examples/ subdirectory for small usage examples.
 
-The CGI::Session::Auth project website, providing a bug tracker, 
-Subversion repository, etc., is located at
-http://developer.berlios.de/projects/perl-c-s-auth/.
+For further information regarding this module, please visit the 
+project website at http://developer.berlios.de/projects/perl-c-s-auth/.
+
+Questions regarding the module should be posted in the appropriate forum
+linked from the project website.
+
+
+BUGS
+
+Please report all bugs via the Bug Tracker on the project website.
+
+Assistance in the development of this modules is encouraged and
+greatly appreciated.
 
 
 COPYRIGHT AND LICENCE
