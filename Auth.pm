@@ -3,7 +3,7 @@
 # Authenticated sessions for CGI scripts
 ###########################################################
 #
-# $Id: Auth.pm 28 2007-09-02 12:49:06Z geewiz $
+# $Id: Auth.pm 32 2007-09-02 13:04:22Z geewiz $
 #
 
 package CGI::Session::Auth;
@@ -21,7 +21,7 @@ our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
 our @EXPORT = qw(
 );
 
-our $VERSION = do { q$Revision: 28 $ =~ /Revision: (\d+)/; sprintf "1.%03d", $1; };
+our $VERSION = do { q$Revision: 32 $ =~ /Revision: (\d+)/; sprintf "1.%03d", $1; };
 
 ###########################################################
 ###
@@ -643,13 +643,14 @@ These people have helped in the development of this module:
 =item Jess Robinson
 =item Simon Rees
 =item Roger Horne
-
+=item Oliver Paukstadt
+=item Jonathon Wyza
 =back
 
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (c) 2003-2006 by Jochen Lillich
+Copyright (c) 2003-2007 by Jochen Lillich
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.

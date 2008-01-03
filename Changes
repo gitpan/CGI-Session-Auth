@@ -2,9 +2,22 @@
 
 Revision history for Perl module CGI::Session::Auth
 
-$Id: Changes 28 2007-09-02 12:49:06Z geewiz $
+$Id: Changes 33 2008-01-03 19:26:01Z geewiz $
 
-1.05 ()
+1.06 (2008-01-03)
+
+    Changes:
+    
+    - Added t/dbi.t test module
+    
+    - Modified the test modules slightly to run under Mac OS X with a current
+      Test::More.
+    
+    Fixes:
+    
+    - Removed Mac OS X resource fork files from the tarball.
+    
+    1.05 (2007-09-02)
 
 	Changes:
 	
