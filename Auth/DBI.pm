@@ -58,6 +58,7 @@ sub new {
       # database handle
       $self->{dbh} = DBI->connect($dsn, $dbuser, $dbpasswd, $dbattr) or croak("DB error: " . $DBI::errstr);
     }
+    
     # parameter 'EncryptPW': passwords are MD5-encrypted (default 0)
     $self->{encryptpw} = $params->{EncryptPW} || 0;
     # parameter 'UserTable': name of user data table
@@ -67,7 +68,7 @@ sub new {
     $self->{useridfield} = $params->{UserIDField} || 'userid';
     # parameter 'GroupTable': name of user data table
     $self->{grouptable} = $params->{GroupTable} || 'auth_group';
-    $self->{groupfield} = $params->{GroupField} || 'group';
+    $self->{groupfield} = $params->{GroupField} || 'groupname';
     $self->{groupuseridfield} = $params->{GroupUserIDField} || 'userid';
     # parameter 'IPTable': name of ip network table
     $self->{iptable} = $params->{IPTable} || 'auth_ip';
@@ -383,15 +384,21 @@ Use your favourite database administration tool to create
 and populate the database:
 
 CREATE TABLE auth_user (
-    userid char(32) NOT NULL,
-    username varchar(30) NOT NULL,
-    passwd varchar(30) NOT NULL default '',
+    userid CHAR(32) NOT NULL,
+    username VARCHAR(30) NOT NULL,
+    passwd VARCHAR(32) NOT NULL default '',
     PRIMARY KEY (userid),
     UNIQUE username (username)
 );
 
 INSERT INTO auth_user VALUES ( '325684ec1b028eaf562dd484c5607a65', 'admin', 'qwe123' );
 INSERT INTO auth_user VALUES ( 'ef19a80d627b5c48728d388c11900f3f', 'guest', 'guest' );
+
+CREATE TABLE auth_group (
+    groupname VARCHAR(30) NOT NULL,
+    userid CHAR(32) NOT NULL,
+    PRIMARY KEY (groupname)
+);
 
 CREATE TABLE auth_ip (
     network char(15) NOT NULL,
@@ -413,6 +420,7 @@ The C<auth_ip> table is used for IP address based authentication. Every row comb
 address and subnet mask (both in dotted quad notation) with a user ID. The C<userid> column
 is used as a foreign key into the C<auth_user> table.
 
+
 =head2 Constructor parameters
 
 Additional to the standard parameters used by the C<new> constructor of
@@ -433,7 +441,25 @@ For an explanation, see the L<DBI> documentation.
 
 =item B<UserTable>: Name of the table containing the user authentication data and profile. (Default: 'auth_user')
 
+=item B<UserIDField>: Name of the column for the user id key. (Default: 'userid')
+
+=item B<UsernameField>: Name of the column for the user name. (Default: 'username')
+
+=item B<PasswordField>: Name of the column for the user password. (Default: 'passwd')
+
+=item B<GroupTable>: Name of the table containing user group relations. For every user that belongs to a group, there is a record with the group name and the user's id. (Default: 'auth_group')
+
+=item B<GroupField>: Name of the column for the group name. (Default: 'groupname')
+
+=item B<GroupUserIDField>: Name of the column for the user id. (Default: 'userid')
+
 =item B<IPTable>: Name of the table containing the by-IP authentication data. (Default: 'auth_ip')
+
+=item B<IPUserIDField>: Name of the column for the user id. (Default: 'userid')
+
+=item B<IPAddressField>: Name of the column for the IP address. (Default: 'network')
+
+=item B<IPNetMaskField> Name of the column for the IP network mask. (Default: 'netmask')
 
 =back
 
@@ -447,11 +473,11 @@ L<CGI::Session::Auth>
 
 =head1 AUTHOR
 
-Jochen Lillich, E<lt>jochen@lillich.infoE<gt>
+Jochen Lillich, E<lt>geewiz@cpan.orgE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2003-2005 by Jochen Lillich
+Copyright 2003-2010 by Jochen Lillich
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.

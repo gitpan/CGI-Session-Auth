@@ -2,15 +2,9 @@
 
 use Test::More tests => 14;
 
-eval "use CGI";                                                                                                   
-if ($@) {                                                                                                         
-	plan skip_all => "no CGI module";
-}
+use CGI;                                                                                                   
+use CGI::Session;                                                                                                   
 
-eval "use CGI::Session";                                                                                                   
-if ($@) {                                                                                                         
-	plan skip_all => "no CGI::Session module";
-}
 
 BEGIN { 
 	use_ok('CGI::Session::Auth');

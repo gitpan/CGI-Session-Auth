@@ -497,9 +497,10 @@ CGI::Session::Auth manages a profile for every user account,
 containing his user name, his password and his user id. The user profile may
 contain additional fields for arbitrary data.
 
-The CGI::Session::Auth class itself is only an abstract base class with
+B<IMPORTANT:> The class CGI::Session::Auth itself is only an abstract base class with
 no real storage backend (only the user 'guest' with password 'guest'
-may log in). See its subclasses for real implementations.
+may log in). You have to derive a child class that implements its own _login() method
+where the actual authentication takes place.
 
 
 =head1 METHODS
@@ -547,26 +548,27 @@ module and gets its logger object calling Log::Log4perl->get_logger('CGI::Sessio
 
 =head2 authenticate()
 
-This method does the actual authentication. It fetches session information to determine the
-authentication status of the current visitor and further checks if form variables
-from a proceeding login form have been set and eventually performs a login attempt.
+This method does the actual authentication. It fetches session information to
+determine the authentication status of the current visitor and further checks
+if form variables from a proceeding login form have been set and eventually
+performs a login attempt.
 
 This login attempt is done by calling the method _login() (see below).
 
-If authentication succeeded neither by session data nor login information, and the
-parameter C<IPAuth> is set to a true value, it tries to authenticate the visitor by his
-IP address.
+If authentication succeeded neither by session data nor login information, and
+the parameter C<IPAuth> is set to a true value, it tries to authenticate the
+visitor by his IP address.
 
 
 =head2 _login()
 
-This virtual method performs the actual login attempt by comparing the
-login form data the visitor sent with some local user database. The _login method
-of the base class CGI::Session::Auth only knows the user 'guest' with password 'guest'.
+This virtual method performs the actual login attempt by comparing the login
+form data the visitor sent with some local user database. The _login method of
+the base class CGI::Session::Auth only knows the user 'guest' with password
+'guest'.
 
-To access a real user database, you have to use a subclass that
-modifies the _login method appropriately. See the modules in the Auth/
-subdirectory.
+To access a real user database, you have to use a subclass that modifies the
+_login method appropriately. See the modules in the Auth/ subdirectory.
 
 
 =head2 sessionCookie()
@@ -603,18 +605,23 @@ Returns the user profile field identified by C<$key>. If C<$value> is given,
 it will be stored in the respective profile field first.
 
 
+=head2 _encpw($password)
+
+Returns a cryptographic hash version of the password argument. If you want to
+store passwords in encrypted form for security reasons, use this function when
+you store the password and when you compare the stored password with the input
+submitted by the user.
+
+
 =head1 SUPPORT
 
 For further information regarding this module, please visit the 
-project website at http://developer.berlios.de/projects/perl-c-s-auth/.
-
-Questions regarding the module should be posted in the appropriate forum
-linked from the project website.
+project website at https://launchpad.net/perl-cgi-session-auth.
 
 
 =head1 BUGS
 
-Please report all bugs via the Bug Tracker on the project website.
+Please report all bugs via the issue tracking on the project website.
 
 Assistance in the development of this modules is encouraged and
 greatly appreciated.
@@ -628,7 +635,7 @@ L<CGI::Application::Plugin::Session>
 
 =head1 AUTHOR
 
-Jochen Lillich, E<lt>jochen@lillich.infoE<gt>
+Jochen Lillich, E<lt>geewiz@cpan.orgE<gt>
 
 
 =head1 CONTRIBUTORS
@@ -645,12 +652,14 @@ These people have helped in the development of this module:
 =item Roger Horne
 =item Oliver Paukstadt
 =item Jonathon Wyza
+=item Hugh Esco
+
 =back
 
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (c) 2003-2007 by Jochen Lillich
+Copyright (c) 2003-2010 by Jochen Lillich
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.

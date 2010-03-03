@@ -55,15 +55,12 @@ Module documentation is provided as POD.
 See the examples/ subdirectory for small usage examples.
 
 For further information regarding this module, please visit the 
-project website at http://developer.berlios.de/projects/perl-c-s-auth/.
-
-Questions regarding the module should be posted in the appropriate forum
-linked from the project website.
+project website at https://launchpad.net/perl-cgi-session-auth.
 
 
 BUGS
 
-Please report all bugs via the Bug Tracker on the project website.
+Please report all bugs via the issue tracking on the project website.
 
 Assistance in the development of this modules is encouraged and
 greatly appreciated.
@@ -71,7 +68,7 @@ greatly appreciated.
 
 COPYRIGHT AND LICENCE
 
-Copyright (c) 2003-2006 Jochen Lillich <jochen@lillich.info>
+Copyright (c) 2003-2010 Jochen Lillich <geewiz@cpan.org>
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself. 
